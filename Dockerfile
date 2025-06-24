@@ -2,8 +2,12 @@ FROM ubuntu:22.04
 
 LABEL maintainer="XKM" version="1.1"
 
+ENV S6_OVERLAY_VERSION="v3.2.1.0"
+ENV S6_OVERLAY_ARCH="x86_64"
+ENV CODE_SERVER_VERSION="4.101.1"
+
 # ban apt interative
-ENV DEBIAN_FRONTEND=noninterative
+ENV DEBIAN_FRONTEND=noninteractive
 
 # for faster download
 # RUN echo 'Acquire::http::Proxy "http://172.17.0.1:3142";' > /etc/apt/apt.conf.d/01proxy
@@ -14,6 +18,7 @@ ENV DEBIAN_FRONTEND=noninterative
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
 	ca-certificates \ 
+	xz-utils \
         nano \
         vim \
         git \
@@ -27,13 +32,23 @@ RUN apt-get update && apt-get upgrade -y && \
         clangd \
         clang-format \
         python3 \
-        wget \
-    && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+	curl \
+	ssh \ 
+        wget && \ 
+	curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash && \
+	apt-get install git-lfs && \
+	apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# install s6-overlay
+RUN curl -o /tmp/s6-overlay-noarch.tar.xz -L "https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" && \
+	tar -C / -xaf /tmp/s6-overlay-noarch.tar.xz && \
+	curl -o /tmp/s6-overlay.tar.xz -L "https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-${S6_OVERLAY_ARCH}.tar.xz" && \
+	tar -C / -xaf /tmp/s6-overlay.tar.xz && \
+	rm -rf /tmp/*
 
 # install code-server
-RUN wget https://github.com/coder/code-server/releases/download/v4.101.1/code-server_4.101.1_amd64.deb -O /tmp/code-server.deb && \
-    apt-get install /tmp/code-server.deb && \ 
+RUN wget https://github.com/coder/code-server/releases/download/v${CODE_SERVER_VERSION}/code-server_${CODE_SERVER_VERSION}_amd64.deb -O /tmp/code-server.deb && \
+    apt-get update && apt-get install -y /tmp/code-server.deb && \
     rm /tmp/code-server.deb
 
 # add user ubuntu as sudoer
@@ -43,11 +58,6 @@ RUN useradd -m -s /bin/bash ubuntu && \
 USER ubuntu
 
 WORKDIR /home/ubuntu
-
-# config code-server
-RUN mkdir -p /home/ubuntu/.config/code-server && \
-    echo "bind-addr: 0.0.0.0:8080 \nauth: password \npassword: 114 \ncert: false" > /home/ubuntu/.config/code-server/config.yaml
-
 
 # install miniconda 
 ENV CONDA_DIR=/home/ubuntu/miniconda3
@@ -59,9 +69,14 @@ RUN mkdir -p $CONDA_DIR && \
     rm /tmp/miniconda.sh && \
     conda clean -afy
 
-RUN conda init bash
+# install git-lfs
+RUN git lfs install
 
-CMD ["/bin/bash"]
+USER root
 
+COPY s6-services/ /etc/services.d/
+EXPOSE 22 8080 
+
+ENTRYPOINT [ "/init" ] 
 
 

@@ -1,0 +1,10 @@
+#!/command/with-contenv sh
+
+mkdir -p /run/sshd
+chmod 0755 /run/sshd
+
+# /usr/sbin/sshd 是 sshd 服务器的程序路径
+# -D: 不作为守护进程运行，而是在前台运行。这是容器化必须的。
+# -e: 将日志输出到 stderr，而不是 syslog。s6-overlay 会捕获它。
+echo "Starting sshd..."
+exec /usr/sbin/sshd -D -e
