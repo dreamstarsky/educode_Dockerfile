@@ -67,7 +67,8 @@ RUN mkdir -p $CONDA_DIR && \
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
     bash /tmp/miniconda.sh -b -u -p $CONDA_DIR && \
     rm /tmp/miniconda.sh && \
-    conda clean -afy
+    conda clean -afy && \
+    conda init bash
 
 # install git-lfs
 RUN git lfs install
