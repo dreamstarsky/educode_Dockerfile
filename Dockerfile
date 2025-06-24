@@ -1,12 +1,12 @@
 FROM ubuntu:22.04
 
-LABEL maintainer="XKM" version="0.0"
+LABEL maintainer="XKM" version="1.1"
 
 # ban apt interative
 ENV DEBIAN_FRONTEND=noninterative
 
 # for faster download
-RUN echo 'Acquire::http::Proxy "http://172.17.0.1:3142";' > /etc/apt/apt.conf.d/01proxy
+# RUN echo 'Acquire::http::Proxy "http://172.17.0.1:3142";' > /etc/apt/apt.conf.d/01proxy
 
 # update system 
 # install packages 
