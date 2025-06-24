@@ -1,9 +1,5 @@
-# 注意事项
+# about
+
+一个同时启动了sshd和code-server（以ubuntu用户身份）的镜像，使用s6-overlay
 
 
-
-构建时记得注释一下这一行
-```Dockerfile
-# for faster download
-RUN echo 'Acquire::http::Proxy "http://172.17.0.1:3142";' > /etc/apt/apt.conf.d/01proxy
-```
