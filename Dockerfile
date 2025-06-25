@@ -1,6 +1,6 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
-LABEL maintainer="XKM" version="1.1"
+LABEL maintainer="XKM" version="v2.0"
 
 ENV S6_OVERLAY_VERSION="v3.2.1.0"
 ENV S6_OVERLAY_ARCH="x86_64"
@@ -52,8 +52,7 @@ RUN wget https://github.com/coder/code-server/releases/download/v${CODE_SERVER_V
     rm /tmp/code-server.deb
 
 # add user ubuntu as sudoer
-RUN useradd -m -s /bin/bash ubuntu && \ 
-	echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/ubuntu-nopasswd
+RUN echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/ubuntu-nopasswd
 
 USER ubuntu
 
