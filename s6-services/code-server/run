@@ -1,12 +1,14 @@
 #!/command/with-contenv sh
 
+START_PATH="${CODE_WORKDIR:-/home/ubuntu}"
+
 # 切换到 'ubuntu' 用户来运行 code-server
 # --auth none: 设置为无密码访问
 # --bind-addr 0.0.0.0:8080: 监听容器内所有 IP 的 8080 端口
 # /home/ubuntu: code-server 启动后默认打开的工作目录
-echo "Starting code-server without password..."
+echo "Starting code-server without password at ${START_PATH}..."
 exec su -l ubuntu -c "code-server \
     --auth none \
     --bind-addr 0.0.0.0:8080 \
     --disable-telemetry \
-    /home/ubuntu"
+    \"${START_PATH}\""
