@@ -36,7 +36,7 @@ RUN apt-get update && apt-get upgrade -y && \
 	ssh \ 
         wget && \ 
 	curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash && \
-	apt-get install git-lfs && \
+	apt-get install -y git-lfs && \
 	apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # install s6-overlay
