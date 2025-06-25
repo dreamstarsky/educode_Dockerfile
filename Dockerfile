@@ -56,8 +56,6 @@ RUN echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/ubuntu-nopasswd
 
 USER ubuntu
 
-WORKDIR /home/ubuntu
-
 # install miniconda 
 ENV CONDA_DIR=/home/ubuntu/miniconda3
 ENV PATH=$CONDA_DIR/bin:$PATH
