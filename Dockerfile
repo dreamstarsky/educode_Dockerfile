@@ -48,7 +48,7 @@ RUN curl -o /tmp/s6-overlay-noarch.tar.xz -L "https://github.com/just-containers
 
 # install code-server
 RUN wget https://github.com/coder/code-server/releases/download/v${CODE_SERVER_VERSION}/code-server_${CODE_SERVER_VERSION}_amd64.deb -O /tmp/code-server.deb && \
-    apt-get update && apt-get install -y /tmp/code-server.deb && \
+    apt-get install -y /tmp/code-server.deb && \
     rm /tmp/code-server.deb
 
 # add user ubuntu as sudoer
