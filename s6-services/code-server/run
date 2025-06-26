@@ -7,8 +7,10 @@ START_PATH="${CODE_WORKDIR:-/home/ubuntu}"
 # --bind-addr 0.0.0.0:8080: 监听容器内所有 IP 的 8080 端口
 # /home/ubuntu: code-server 启动后默认打开的工作目录
 echo "Starting code-server without password at ${START_PATH}..."
-exec su -l ubuntu -c "code-server \
+
+exec env HOME=/home/ubuntu \
+    s6-setuidgid ubuntu code-server \
     --auth none \
     --bind-addr 0.0.0.0:8080 \
     --disable-telemetry \
-    \"${START_PATH}\""
+    "${START_PATH}"
