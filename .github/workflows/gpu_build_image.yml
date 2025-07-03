@@ -3,8 +3,6 @@
 name: Build and Publish Image -- gpu
 
 on:
-  push:
-    branches: ["main"]
   workflow_dispatch:
 
 env:
