@@ -23,7 +23,7 @@ podman build -f Dockerfile .
 or build with some mirrors.
 ```sh
 podman build -f Dockerfile . \
-    --build-arg UBUNTU_MIRROR=https://mirrors.aliyun.com/ubuntu \
-    --build-arg UBUNTU_SECURITY_MIRROR=https://mirrors.aliyun.com/ubuntu \
+    --build-arg UBUNTU_MIRROR=http://mirrors.aliyun.com/ubuntu \
+    --build-arg UBUNTU_SECURITY_MIRROR=http://mirrors.aliyun.com/ubuntu \
     --build-arg MINICONDA_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda
 ```
