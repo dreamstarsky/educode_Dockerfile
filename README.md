@@ -1,13 +1,29 @@
 # about
 
-一个同时启动了sshd和code-server（以ubuntu用户身份）的镜像，使用s6-overlay
+An image that starts both sshd and code-server, using s6-overlay.
 
 # usage
 
-code-server web 页面开放在8080端口，sshd在22端口
+Ports: 
+- 8080 -> code-server 
+- 22 -> sshd
 
-可以通过环境变量改变code-server默认路径：
+Change default code-server workspace：
 ```sh
 # defalut:
 CODE_WORKDIR=/home/ubuntu
+```
+
+# build
+
+```sh
+podman build -f Dockerfile .
+```
+
+or build with some mirrors.
+```sh
+podman build -f Dockerfile . \
+    --build-arg UBUNTU_MIRROR=https://mirrors.aliyun.com/ubuntu \
+    --build-arg UBUNTU_SECURITY_MIRROR=https://mirrors.aliyun.com/ubuntu \
+    --build-arg MINICONDA_MIRROR=https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda
 ```
