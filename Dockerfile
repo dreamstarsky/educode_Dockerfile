@@ -2,15 +2,15 @@ FROM ubuntu:24.04
 
 LABEL maintainer="XKM" version="v2.0"
 
-ENV S6_OVERLAY_VERSION="v3.2.1.0"
-ENV S6_OVERLAY_ARCH="x86_64"
-ENV CODE_SERVER_VERSION="4.101.1"
+ARG S6_OVERLAY_VERSION="v3.2.1.0"
+ARG S6_OVERLAY_ARCH="x86_64"
+ARG CODE_SERVER_VERSION="4.101.1"
 
 # ban apt interative
-ENV DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 
 # for faster download
-# RUN echo 'Acquire::http::Proxy "http://172.17.0.1:3142";' > /etc/apt/apt.conf.d/01proxy
+RUN sed -i.bak 's|\w\+.ubuntu.com|mirrors.aliyun.com|' /etc/apt/sources.list.d/ubuntu.sources
 
 # update system 
 # install packages 
@@ -47,7 +47,7 @@ RUN curl -o /tmp/s6-overlay-noarch.tar.xz -L "https://github.com/just-containers
 	rm -rf /tmp/*
 
 # install code-server
-RUN wget https://github.com/coder/code-server/releases/download/v${CODE_SERVER_VERSION}/code-server_${CODE_SERVER_VERSION}_amd64.deb -O /tmp/code-server.deb && \
+RUN wget "https://github.com/coder/code-server/releases/download/v${CODE_SERVER_VERSION}/code-server_${CODE_SERVER_VERSION}_amd64.deb" -O /tmp/code-server.deb && \
     apt-get install -y /tmp/code-server.deb && \
     rm /tmp/code-server.deb
 
@@ -57,11 +57,11 @@ RUN echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/ubuntu-nopasswd
 USER ubuntu
 
 # install miniconda 
-ENV CONDA_DIR=/home/ubuntu/miniconda3
+ARG CONDA_DIR=/home/ubuntu/miniconda3
 ENV PATH=$CONDA_DIR/bin:$PATH
 
 RUN mkdir -p $CONDA_DIR && \
-    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+    wget https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
     bash /tmp/miniconda.sh -b -u -p $CONDA_DIR && \
     rm /tmp/miniconda.sh && \
     conda clean -afy && \
@@ -75,6 +75,12 @@ USER root
 COPY s6-services/ /etc/services.d/
 EXPOSE 22 8080 
 
+# code-server extensions
+USER ubuntu
+ARG EXTENSIONS=""
+RUN [ -n "$EXTENSIONS" ] && echo "$EXTENSIONS" | xargs -n 1 code-server --install-extension || true
+
+USER root
 ENTRYPOINT [ "/init" ] 
 
 
