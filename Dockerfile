@@ -83,6 +83,13 @@ EXPOSE 22 8080
 # code-server extensions
 USER ubuntu
 ARG EXTENSIONS=""
+RUN code-server --install-extension cnbcool.cnb-welcome \
+  && code-server --install-extension redhat.vscode-yaml \
+  && code-server --install-extension dbaeumer.vscode-eslint \
+  && code-server --install-extension waderyan.gitblame \
+  && code-server --install-extension mhutchie.git-graph \
+  && code-server --install-extension donjayamanne.githistory \
+  && code-server --install-extension tencent-cloud.coding-copilot
 RUN [ -n "$EXTENSIONS" ] && echo "$EXTENSIONS" | xargs -n 1 code-server --install-extension || true
 
 USER root
