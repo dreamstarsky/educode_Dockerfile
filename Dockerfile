@@ -22,7 +22,7 @@ RUN sed -i.bak /etc/apt/sources.list.d/ubuntu.sources \
 # clean cache 
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
-    ca-certificates \ 
+    ca-certificates \
     xz-utils \
     nano \
     vim \
@@ -38,8 +38,9 @@ RUN apt-get update && apt-get upgrade -y && \
     clang-format \
     python3 \
     curl \
-    ssh \ 
-    wget && \ 
+    jq \
+    ssh \
+    wget && \
     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash && \
     apt-get install -y git-lfs && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -89,8 +90,14 @@ RUN code-server --install-extension cnbcool.cnb-welcome \
   && code-server --install-extension waderyan.gitblame \
   && code-server --install-extension mhutchie.git-graph \
   && code-server --install-extension donjayamanne.githistory \
-  && code-server --install-extension tencent-cloud.coding-copilot
+  && code-server --install-extension tencent-cloud.coding-copilot \
+  && code-server --install-extension MS-CEINTL.vscode-language-pack-zh-hans
 RUN [ -n "$EXTENSIONS" ] && echo "$EXTENSIONS" | xargs -n 1 code-server --install-extension || true
+
+# config language
+COPY create_languagepacks /tmp/create_languagepacks 
+RUN /tmp/create_languagepacks && \
+    sudo rm -f /tmp/create_languagepacks
 
 USER root
 ENTRYPOINT [ "/init" ] 
